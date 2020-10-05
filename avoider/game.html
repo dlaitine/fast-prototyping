@@ -116,6 +116,27 @@
     });
   });
 
+  function game() {
+    document.getElementById("startGame").style.visibility = "hidden";
+    player = document.getElementById("player");
+    enemy1 = document.getElementById("enemy1");
+    enemy2 = document.getElementById("enemy2");
+    score = document.getElementById("score");
+
+    initializeGame();
+    play();
+  }
+
+  function initializeGame() {
+    initializeDefaultValues();
+
+    enemy1timer = setTimeout('targetEnemy1()', 2000 - (Math.random() * 1000));
+    enemy1waiting = true;
+
+    enemy2timer = setTimeout('targetEnemy2()', 2000 - (Math.random() * 1000));
+    enemy2waiting = true;
+  }
+
   function initializeDefaultValues() {
     player.style.left = "275px";
     player.style.top = "275px";
@@ -139,27 +160,6 @@
 
     scoreCount = 0;
     score.innerHtml = "Score: 0";
-  }
-
-  function game() {
-    document.getElementById("startGame").style.visibility = "hidden";
-    player = document.getElementById("player");
-    enemy1 = document.getElementById("enemy1");
-    enemy2 = document.getElementById("enemy2");
-    score = document.getElementById("score");
-    
-    initializeGame();
-    play();
-  }
-
-  function initializeGame() {
-    initializeDefaultValues();
-
-    enemy1timer = setTimeout('targetEnemy1()', 2000 - (Math.random() * 1000));
-    enemy1waiting = true;
-
-    enemy2timer = setTimeout('targetEnemy2()', 2000 - (Math.random() * 1000));
-    enemy2waiting = true;
   }
 
   function play() {
@@ -303,7 +303,9 @@
 
   function restartGame() {
     document.getElementById('restartGame').style.visibility = 'hidden';
-    initializeDefaultValues();
+    clearTimeout(enemy1timer);
+    clearTimeout(enemy2timer);
+    initializeGame();
     $("#player").draggable("enable");
     play();
   }

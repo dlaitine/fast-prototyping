@@ -130,10 +130,10 @@
   function initializeGame() {
     initializeDefaultValues();
 
-    enemy1timer = setTimeout('targetEnemy1()', 2000 - (Math.random() * 1000));
+    enemy1timer = setTimeout("targetEnemy1()", 2000 - (Math.random() * 1000));
     enemy1waiting = true;
 
-    enemy2timer = setTimeout('targetEnemy2()', 2000 - (Math.random() * 1000));
+    enemy2timer = setTimeout("targetEnemy2()", 2000 - (Math.random() * 1000));
     enemy2waiting = true;
   }
 
@@ -165,7 +165,7 @@
   function play() {
     moveEnemies();
     if(!checkCollisions()) {
-      setTimeout('play()', 1000/30);
+      setTimeout("play()", 1000/30);
     } else {
       gameOver();
     }
@@ -200,7 +200,7 @@
 
       move(enemy1, enemy1x, enemy1y);  
     } else if(!enemy1waiting){
-      enemy1timer = setTimeout('targetEnemy1()', 1000 - (Math.random() * 1000));
+      enemy1timer = setTimeout("targetEnemy1()", 1000 - (Math.random() * 1000));
       enemy1waiting = true;
     }
 
@@ -231,7 +231,7 @@
 
       move(enemy2, enemy2x, enemy2y);  
     } else if(!enemy2waiting){
-      enemy2timer = setTimeout('targetEnemy2()', 1000 - (Math.random() * 1000));
+      enemy2timer = setTimeout("targetEnemy2()", 1000 - (Math.random() * 1000));
       enemy2waiting = true;
     }
   }
@@ -257,8 +257,8 @@
   }
 
   function move(element, x, y) {
-    element.style.left = x + 'px';
-    element.style.top = y + 'px';
+    element.style.left = x + "px";
+    element.style.top = y + "px";
   }
 
   function checkCollisions(){		
@@ -298,11 +298,11 @@
   }
 
   function gameOver() {
-    document.getElementById('restartGame').style.visibility = 'visible';
+    document.getElementById("restartGame").style.visibility = "visible";
   }
 
   function restartGame() {
-    document.getElementById('restartGame').style.visibility = 'hidden';
+    document.getElementById("restartGame").style.visibility = "hidden";
     clearTimeout(enemy1timer);
     clearTimeout(enemy2timer);
     initializeGame();

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<head>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style>
+    body {
+      color: #00FF00;
+      background-color: #000000;
+    }
+
+    #game {
+      height: 600px;
+      width: 600px;
+      background-color: black;
+      border: solid 1px lime;
+      position: relative;
+    }
+
+    #startGame {
+      width: 80px;
+      background-color: black;
+      color: lime;
+      border: solid 1px lime;
+      position: absolute;
+      top: 200px;
+      left: 260px;	
+    }
+
+    #restartGame {
+      visibility: hidden;
+      background-color: black;
+      color: lime;
+      border: solid 1px lime;
+      position: absolute;
+      top: 200px;
+      left: 260px;	
+      z-index: 2;
+    }
+
+    #player {
+      height: 50px;
+      width: 50px;
+      background-color: lime;
+      border-radius: 50px;
+      position: absolute;
+      top: 275px;
+      left: 275px;
+    }
+
+    #enemy1 {
+      height: 50px;
+      width: 50px;
+      background-color: lime;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+
+    #enemy2 {
+      height: 50px;
+      width: 50px;
+      background-color: lime;
+      position: absolute;
+      top: 550px;
+      left: 550px;
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <h1>Avoider</h1>	   
+    Drag the player (ball) and avoid the enemies (squares)! They will jump right at you, so be careful!
+  </section>
+  <br/>
+  <div id="game">
+    <input type="button" id="startGame" value="Start game" onclick="game()">
+    </input>
+    <input type="button" id="restartGame" value="Restart game" onclick="restartGame()">
+    </input>
+    <div id="player"></div>
+    <div id="enemy1"></div>
+    <div id="enemy2"></div>
+  </div>
+  <div id="score">Score: 0</div>
+</body>
+
+
+<script>
+  var player;
+
+  var enemy1;
+  var enemy1x = 0;
+  var enemy1y = 0;
+  var enemy1targetx;
+  var enemy1targety;
+  var enemy1waiting = false;
+  var enemy1moving = false;
+  var enemy1timer;
+  
+  var enemy2;
+  var enemy2x = 550;
+  var enemy2y = 550;
+  var enemy2targetx;
+  var enemy2targety;
+  var enemy2waiting = false;
+  var enemy2moving = false;
+  var enemy2timer;
+
+  var score;
+  var scoreCount = 0;
+
+  $(function() {
+    $("#player").draggable({
+      preventCollision: true,
+		  containment: "#game"
+    });
+  });
+
+  function initializeDefaultValues() {
+    player.style.left = "275px";
+    player.style.top = "275px";
+
+    enemy1x = 0;
+    enemy1.style.left = enemy1x + "px";
+    enemy1y = 0;
+    enemy1.style.top = enemy1y + "px";
+    enemy1waiting = false;
+    enemy1moving = false;
+
+    enemy2x = 550;
+    enemy2.style.left = enemy2x + "px";
+    enemy2y = 550;
+    enemy2.style.top = enemy2y + "px";
+    enemy2waiting = false;
+    enemy2moving = false;
+
+    enemy1waiting = false;
+    enemy1moving = false;
+
+    scoreCount = 0;
+    score.innerHtml = "Score: 0";
+  }
+
+  function game() {
+    document.getElementById("startGame").style.visibility = "hidden";
+    player = document.getElementById("player");
+    enemy1 = document.getElementById("enemy1");
+    enemy2 = document.getElementById("enemy2");
+    score = document.getElementById("score");
+    
+    initializeGame();
+    play();
+  }
+
+  function initializeGame() {
+    initializeDefaultValues();
+
+    enemy1timer = setTimeout('targetEnemy1()', 2000 - (Math.random() * 1000));
+    enemy1waiting = true;
+
+    enemy2timer = setTimeout('targetEnemy2()', 2000 - (Math.random() * 1000));
+    enemy2waiting = true;
+  }
+
+  function play() {
+    moveEnemies();
+    if(!checkCollisions()) {
+      setTimeout('play()', 1000/30);
+    } else {
+      gameOver();
+    }
+    updateScore();
+  }
+
+  function moveEnemies() {
+    if(enemy1moving) {
+      enemy1x += enemy1targetx * 40;
+      enemy1y += enemy1targety * 40;
+
+      if(enemy1x > 550) {
+        enemy1x = 550;
+        enemy1moving = false;
+        enemy1waiting = false;
+      }
+      if(enemy1x < 0) {
+        enemy1x = 0;
+        enemy1moving = false;
+        enemy1waiting = false;
+      }
+      if(enemy1y > 550) {
+        enemy1y = 550;
+        enemy1moving = false;
+        enemy1waiting = false;
+      }
+      if(enemy1y < 0) {
+        enemy1y = 0;
+        enemy1moving = false;
+        enemy1waiting = false;
+      }
+
+      move(enemy1, enemy1x, enemy1y);  
+    } else if(!enemy1waiting){
+      enemy1timer = setTimeout('targetEnemy1()', 1000 - (Math.random() * 1000));
+      enemy1waiting = true;
+    }
+
+    if(enemy2moving) {
+      enemy2x += enemy2targetx * 40;
+      enemy2y += enemy2targety * 40;
+
+      if(enemy2x > 550) {
+        enemy2x = 550;
+        enemy2moving = false;
+        enemy2waiting = false;
+      }
+      if(enemy2x < 0) {
+        enemy2x = 0;
+        enemy2moving = false;
+        enemy2waiting = false;
+      }
+      if(enemy2y > 550) {
+        enemy2y = 550;
+        enemy2moving = false;
+        enemy2waiting = false;
+      }
+      if(enemy2y < 0) {
+        enemy2y = 0;
+        enemy2moving = false;
+        enemy2waiting = false;
+      }
+
+      move(enemy2, enemy2x, enemy2y);  
+    } else if(!enemy2waiting){
+      enemy2timer = setTimeout('targetEnemy2()', 1000 - (Math.random() * 1000));
+      enemy2waiting = true;
+    }
+  }
+
+  function targetEnemy1() {
+    var enemyPosition = enemy1.getBoundingClientRect();
+    var playerPosition = player.getBoundingClientRect();
+
+    var totalXYdiff = Math.abs(playerPosition.left - enemyPosition.left) + Math.abs(playerPosition.top - enemyPosition.top);
+    enemy1targetx = (playerPosition.left - enemyPosition.left) / totalXYdiff;
+    enemy1targety = (playerPosition.top - enemyPosition.top) / totalXYdiff;
+    enemy1moving = true;
+  }
+
+  function targetEnemy2() {
+    var enemyPosition = enemy2.getBoundingClientRect();
+    var playerPosition = player.getBoundingClientRect();
+    
+    var totalXYdiff = Math.abs(playerPosition.left - enemyPosition.left) + Math.abs(playerPosition.top - enemyPosition.top);
+    enemy2targetx = (playerPosition.left - enemyPosition.left) / totalXYdiff;
+    enemy2targety = (playerPosition.top - enemyPosition.top) / totalXYdiff;
+    enemy2moving = true;
+  }
+
+  function move(element, x, y) {
+    element.style.left = x + 'px';
+    element.style.top = y + 'px';
+  }
+
+  function checkCollisions(){		
+		
+		var pRect = player.getBoundingClientRect();
+		var e1Rect = enemy1.getBoundingClientRect();
+		var e2Rect = enemy2.getBoundingClientRect();
+		var collide1 = false;
+		var collide2 = false;
+		
+		
+		if (!(pRect.right < e1Rect.left || pRect.left > e1Rect.right || 
+		pRect.bottom < e1Rect.top || pRect.top > e1Rect.bottom))
+		{
+			collide1 = true;
+		}
+		
+		if (!(pRect.right < e2Rect.left || pRect.left > e2Rect.right || 
+		pRect.bottom < e2Rect.top || pRect.top > e2Rect.bottom))
+		{
+			collide2 = true;
+		}
+		
+		if (collide1 || collide2) {
+      $("#player").draggable("disable");
+      $(document).trigger("mouseup");
+
+      return true;
+		}
+
+    return false;
+  }
+  
+  function updateScore() {
+    scoreCount += 1;
+    score.innerHTML = "Score: " + scoreCount;
+  }
+
+  function gameOver() {
+    document.getElementById('restartGame').style.visibility = 'visible';
+  }
+
+  function restartGame() {
+    document.getElementById('restartGame').style.visibility = 'hidden';
+    initializeDefaultValues();
+    $("#player").draggable("enable");
+    play();
+  }
+
+</script>

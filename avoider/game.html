@@ -262,32 +262,32 @@
   }
 
   function checkCollisions(){		
-		
-		var pRect = player.getBoundingClientRect();
-		var e1Rect = enemy1.getBoundingClientRect();
-		var e2Rect = enemy2.getBoundingClientRect();
-		var collide1 = false;
-		var collide2 = false;
-		
-		
-		if (!(pRect.right < e1Rect.left || pRect.left > e1Rect.right || 
-		pRect.bottom < e1Rect.top || pRect.top > e1Rect.bottom))
-		{
-			collide1 = true;
-		}
-		
-		if (!(pRect.right < e2Rect.left || pRect.left > e2Rect.right || 
-		pRect.bottom < e2Rect.top || pRect.top > e2Rect.bottom))
-		{
-			collide2 = true;
-		}
-		
-		if (collide1 || collide2) {
+
+    var pRect = player.getBoundingClientRect();
+    var e1Rect = enemy1.getBoundingClientRect();
+    var e2Rect = enemy2.getBoundingClientRect();
+    var collide1 = false;
+    var collide2 = false;
+
+
+    if (!(pRect.right < e1Rect.left || pRect.left > e1Rect.right ||
+    pRect.bottom < e1Rect.top || pRect.top > e1Rect.bottom))
+    {
+      collide1 = true;
+    }
+
+    if (!(pRect.right < e2Rect.left || pRect.left > e2Rect.right ||
+    pRect.bottom < e2Rect.top || pRect.top > e2Rect.bottom))
+    {
+      collide2 = true;
+    }
+
+    if (collide1 || collide2) {
       $("#player").draggable("disable");
       $(document).trigger("mouseup");
 
       return true;
-		}
+    }
 
     return false;
   }
